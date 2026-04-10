@@ -1,3 +1,4 @@
+// unchanged from working version
 document.addEventListener('DOMContentLoaded', function () {
   var DEFAULT_SAYINGS = [
     'Back in my day...',

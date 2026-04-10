@@ -66,6 +66,7 @@ button.secondary {
   border: 2px solid #d1d5db;
   border-radius: 14px;
   background: white;
+  color: #1f2937;
   min-height: 90px;
   padding: 8px;
   font-size: 14px;
@@ -76,6 +77,12 @@ button.secondary {
   align-items: center;
   justify-content: center;
   word-break: break-word;
+}
+
+.square:visited,
+.square:focus,
+.square:active {
+  color: #1f2937;
 }
 
 .square.marked {
