@@ -1,215 +1,211 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const DEFAULT_SAYINGS = [
-    "Back in my day...",
-    "I know a shortcut",
-    "That’s too expensive",
-    "I’m not lost",
-    "They don’t make ’em like they used to",
-    "Just watch this",
-    "You call that driving?",
-    "Need anything from the store?",
-    "That’s a good deal",
-    "Turn that down",
-    "Who touched the thermostat?",
-    "I could fix that",
-    "Don’t tell grandma",
-    "That reminds me of...",
-    "Want some advice?",
-    "That’ll put hair on your chest",
-    "I’ve got a guy for that",
-    "When I was your age...",
-    "Not bad, not bad",
-    "That’s how they get ya",
-    "Mark my words",
-    "Listen here",
-    "No need for instructions",
-    "It still works fine",
-    "That road used to be different",
-    "I remember when gas was cheap",
-    "You don’t need to buy that",
-    "Let me show you the right way",
-    "That’s a real mess",
-    "Did you bring a jacket?"
+document.addEventListener('DOMContentLoaded', function () {
+  var DEFAULT_SAYINGS = [
+    'Back in my day...',
+    'I know a shortcut',
+    'That is too expensive',
+    'I am not lost',
+    'They do not make them like they used to',
+    'Just watch this',
+    'You call that driving?',
+    'Need anything from the store?',
+    'That is a good deal',
+    'Turn that down',
+    'Who touched the thermostat?',
+    'I could fix that',
+    'Do not tell grandma',
+    'That reminds me of...',
+    'Want some advice?',
+    'That will put hair on your chest',
+    'I have got a guy for that',
+    'When I was your age...',
+    'Not bad, not bad',
+    'That is how they get ya',
+    'Mark my words',
+    'Listen here',
+    'No need for instructions',
+    'It still works fine',
+    'That road used to be different',
+    'I remember when gas was cheap',
+    'You do not need to buy that',
+    'Let me show you the right way',
+    'That is a real mess',
+    'Did you bring a jacket?'
   ];
 
-  const boardEl = document.getElementById("bingo-board");
-  const statusEl = document.getElementById("status");
-  const editorPanel = document.getElementById("editorPanel");
-  const phrasesInput = document.getElementById("phrasesInput");
-  const newCardBtn = document.getElementById("newCard");
-  const editPhrasesBtn = document.getElementById("editPhrases");
-  const clearMarksBtn = document.getElementById("clearMarks");
-  const closeEditorBtn = document.getElementById("closeEditor");
-  const savePhrasesBtn = document.getElementById("savePhrases");
-  const resetDefaultsBtn = document.getElementById("resetDefaults");
+  var boardEl = document.getElementById('bingo-board');
+  var statusEl = document.getElementById('status');
+  var editorPanel = document.getElementById('editorPanel');
+  var phrasesInput = document.getElementById('phrasesInput');
+
+  function getPhrases() {
+    try {
+      var saved = localStorage.getItem('papaBingoPhrases');
+      if (!saved) return DEFAULT_SAYINGS.slice();
+      var parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length >= 24) return parsed;
+    } catch (e) {}
+    return DEFAULT_SAYINGS.slice();
+  }
+
+  function setPhrases(list) {
+    localStorage.setItem('papaBingoPhrases', JSON.stringify(list));
+  }
 
   function shuffle(arr) {
-    const copy = [...arr];
-    for (let i = copy.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [copy[i], copy[j]] = [copy[j], copy[i]];
+    var copy = arr.slice();
+    for (var i = copy.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = copy[i];
+      copy[i] = copy[j];
+      copy[j] = temp;
     }
     return copy;
   }
 
-  function getSavedPhrases() {
-    const saved = localStorage.getItem("papaBingoPhrases");
-    if (!saved) return DEFAULT_SAYINGS;
+  function saveBoard(items, marked) {
+    localStorage.setItem('papaBingoBoard', JSON.stringify({
+      items: items,
+      marked: marked
+    }));
+  }
+
+  function loadBoard() {
     try {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length >= 24) return parsed;
+      var saved = localStorage.getItem('papaBingoBoard');
+      if (!saved) return null;
+      var parsed = JSON.parse(saved);
+      if (parsed && Array.isArray(parsed.items) && parsed.items.length === 25 && Array.isArray(parsed.marked)) {
+        return parsed;
+      }
     } catch (e) {}
-    return DEFAULT_SAYINGS;
+    return null;
   }
 
-  function savePhrasesList(list) {
-    localStorage.setItem("papaBingoPhrases", JSON.stringify(list));
-  }
-
-  function getCurrentBoardState() {
-    const state = localStorage.getItem("papaBingoBoard");
-    if (!state) return null;
-    try {
-      return JSON.parse(state);
-    } catch (e) {
-      return null;
+  function getWinLines() {
+    var wins = [];
+    for (var i = 0; i < 5; i++) {
+      wins.push([i*5, i*5+1, i*5+2, i*5+3, i*5+4]);
+      wins.push([i, i+5, i+10, i+15, i+20]);
     }
+    wins.push([0, 6, 12, 18, 24]);
+    wins.push([4, 8, 12, 16, 20]);
+    return wins;
   }
 
-  function saveBoardState(items, markedIndexes) {
-    localStorage.setItem("papaBingoBoard", JSON.stringify({ items, markedIndexes }));
-  }
+  function updateBingoStatus() {
+    var squares = Array.prototype.slice.call(document.querySelectorAll('.square'));
+    var marked = squares.map(function (sq) {
+      return sq.classList.contains('marked');
+    });
 
-  function clearSavedMarks() {
-    const state = getCurrentBoardState();
-    if (!state || !Array.isArray(state.items)) return;
-    saveBoardState(state.items, [12]);
-  }
+    var bingo = getWinLines().some(function (line) {
+      return line.every(function (idx) { return marked[idx]; });
+    });
 
-  function populateEditor() {
-    phrasesInput.value = getSavedPhrases().join("\n");
+    statusEl.textContent = bingo ? '🎉 BINGO! 🎉' : '';
   }
 
   function persistCurrentBoard() {
-    const squares = [...document.querySelectorAll(".square")];
-    const items = squares.map((s) => s.textContent);
-    const markedIndexes = squares
-      .map((s, idx) => (s.classList.contains("marked") ? idx : null))
-      .filter((v) => v !== null);
-    saveBoardState(items, markedIndexes);
+    var squares = Array.prototype.slice.call(document.querySelectorAll('.square'));
+    var items = squares.map(function (sq) { return sq.textContent; });
+    var marked = squares.map(function (sq) { return sq.classList.contains('marked'); });
+    saveBoard(items, marked);
   }
 
-  function checkBingo() {
-    const squares = [...document.querySelectorAll(".square")];
-    const marked = squares.map((s) => s.classList.contains("marked"));
-    const wins = [];
+  function renderBoard(items, marked) {
+    boardEl.innerHTML = '';
 
-    for (let i = 0; i < 5; i++) {
-      wins.push([0, 1, 2, 3, 4].map((j) => i * 5 + j));
-      wins.push([0, 1, 2, 3, 4].map((j) => j * 5 + i));
-    }
+    items.forEach(function (text, idx) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'square';
+      btn.textContent = text;
 
-    wins.push([0, 6, 12, 18, 24], [4, 8, 12, 16, 20]);
-
-    const bingo = wins.some((combo) => combo.every((i) => marked[i]));
-    statusEl.textContent = bingo ? "🎉 BINGO! 🎉" : "";
-  }
-
-  function createBoard(useExisting = false) {
-    boardEl.innerHTML = "";
-    statusEl.textContent = "";
-
-    let items;
-    let markedIndexes = [12];
-    const existing = getCurrentBoardState();
-
-    if (useExisting && existing && Array.isArray(existing.items) && existing.items.length === 25) {
-      items = existing.items;
-      markedIndexes = Array.isArray(existing.markedIndexes) ? existing.markedIndexes : [12];
-    } else {
-      const sayings = shuffle(getSavedPhrases()).slice(0, 24);
-      sayings.splice(12, 0, "FREE");
-      items = sayings;
-    }
-
-    items.forEach((text, idx) => {
-      const div = document.createElement("button");
-      div.type = "button";
-      div.className = "square";
-      div.textContent = text;
-      div.setAttribute("aria-pressed", "false");
-
-      const isMarked = text === "FREE" || markedIndexes.includes(idx);
-      if (isMarked) {
-        div.classList.add("marked");
-        div.setAttribute("aria-pressed", "true");
+      if (marked[idx] || text === 'FREE') {
+        btn.classList.add('marked');
       }
 
-      div.addEventListener("click", () => {
-        if (text === "FREE") return;
-        div.classList.toggle("marked");
-        div.setAttribute("aria-pressed", div.classList.contains("marked") ? "true" : "false");
+      btn.addEventListener('click', function () {
+        if (text === 'FREE') return;
+        btn.classList.toggle('marked');
         persistCurrentBoard();
-        checkBingo();
+        updateBingoStatus();
       });
 
-      boardEl.appendChild(div);
+      boardEl.appendChild(btn);
     });
 
     persistCurrentBoard();
-    checkBingo();
+    updateBingoStatus();
   }
 
-  function openEditor() {
-    populateEditor();
-    editorPanel.classList.remove("hidden");
-    editorPanel.setAttribute("aria-hidden", "false");
-    phrasesInput.focus();
+  function createNewBoard() {
+    var phrases = shuffle(getPhrases()).slice(0, 24);
+    phrases.splice(12, 0, 'FREE');
+    var marked = new Array(25).fill(false);
+    marked[12] = true;
+    renderBoard(phrases, marked);
   }
 
-  function closeEditor() {
-    editorPanel.classList.add("hidden");
-    editorPanel.setAttribute("aria-hidden", "true");
+  function loadExistingOrNew() {
+    var board = loadBoard();
+    if (board) {
+      renderBoard(board.items, board.marked);
+    } else {
+      createNewBoard();
+    }
   }
 
-  newCardBtn.addEventListener("click", () => createBoard(false));
-  editPhrasesBtn.addEventListener("click", openEditor);
-  clearMarksBtn.addEventListener("click", () => {
-    clearSavedMarks();
-    createBoard(true);
+  document.getElementById('newCard').addEventListener('click', function () {
+    createNewBoard();
   });
-  closeEditorBtn.addEventListener("click", closeEditor);
 
-  savePhrasesBtn.addEventListener("click", () => {
-    const phrases = phrasesInput.value
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean);
+  document.getElementById('clearMarks').addEventListener('click', function () {
+    var board = loadBoard();
+    if (!board) {
+      createNewBoard();
+      return;
+    }
+    var marked = new Array(25).fill(false);
+    marked[12] = true;
+    renderBoard(board.items, marked);
+  });
+
+  document.getElementById('editPhrases').addEventListener('click', function () {
+    phrasesInput.value = getPhrases().join('\n');
+    editorPanel.classList.remove('hidden');
+  });
+
+  document.getElementById('closeEditor').addEventListener('click', function () {
+    editorPanel.classList.add('hidden');
+  });
+
+  document.getElementById('savePhrases').addEventListener('click', function () {
+    var phrases = phrasesInput.value
+      .split('\n')
+      .map(function (line) { return line.trim(); })
+      .filter(function (line) { return line.length > 0; });
 
     if (phrases.length < 24) {
-      alert("Please enter at least 24 phrases.");
+      alert('Please enter at least 24 phrases.');
       return;
     }
 
-    savePhrasesList(phrases);
-    closeEditor();
-    createBoard(false);
+    setPhrases(phrases);
+    editorPanel.classList.add('hidden');
+    createNewBoard();
   });
 
-  resetDefaultsBtn.addEventListener("click", () => {
-    savePhrasesList(DEFAULT_SAYINGS);
-    populateEditor();
+  document.getElementById('resetDefaults').addEventListener('click', function () {
+    setPhrases(DEFAULT_SAYINGS);
+    phrasesInput.value = DEFAULT_SAYINGS.join('\n');
   });
 
-  window.addEventListener("click", (event) => {
-    if (event.target === editorPanel) closeEditor();
-  });
-
-  window.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !editorPanel.classList.contains("hidden")) {
-      closeEditor();
+  editorPanel.addEventListener('click', function (event) {
+    if (event.target === editorPanel) {
+      editorPanel.classList.add('hidden');
     }
   });
 
-  createBoard(true);
+  loadExistingOrNew();
 });

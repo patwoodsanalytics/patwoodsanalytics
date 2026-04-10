@@ -1,18 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Papa Sayings Bingo</title>
-  <meta name="theme-color" content="#2563eb" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="container">
-    <header class="hero">
-      <h1>Papa Sayings Bingo</h1>
-      <p class="subtitle">Tap squares as Papa says them. Edit your phrase list anytime.</p>
-    </header>
+    <h1>Papa Sayings Bingo</h1>
+    <p class="subtitle">Tap squares as Papa says them. Edit the phrases anytime.</p>
 
     <div class="controls">
       <button id="newCard" type="button">New Card</button>
@@ -22,27 +19,22 @@
 
     <p id="status" class="status" aria-live="polite"></p>
 
-    <div id="bingo-board" class="board" aria-label="Bingo board"></div>
+    <div id="bingo-board" class="board"></div>
 
-    <section id="editorPanel" class="editor hidden" aria-hidden="true">
+    <div id="editorPanel" class="editor hidden">
       <div class="editor-card">
         <div class="editor-header">
           <h2>Edit Bingo Phrases</h2>
           <button id="closeEditor" class="secondary" type="button">Close</button>
         </div>
-
-        <p class="editor-help">
-          Enter one phrase per line. Use at least 24 phrases. Your list saves in this browser.
-        </p>
-
+        <p class="editor-help">Enter one phrase per line. Use at least 24 phrases.</p>
         <textarea id="phrasesInput" spellcheck="true"></textarea>
-
         <div class="editor-actions">
           <button id="savePhrases" type="button">Save Phrases</button>
           <button id="resetDefaults" class="secondary" type="button">Reset Defaults</button>
         </div>
       </div>
-    </section>
+    </div>
   </div>
 
   <script src="script.js" defer></script>
