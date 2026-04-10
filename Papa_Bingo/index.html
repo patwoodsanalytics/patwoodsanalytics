@@ -1,18 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Papa Sayings Bingo</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Papa Sayings Bingo</h1>
-    <button id="newCard">New Card</button>
-    <div id="bingo-board" class="board"></div>
-    <p id="status"></p>
+    <header class="hero">
+      <h1>Papa Sayings Bingo</h1>
+      <p class="subtitle">Tap squares as Papa says them. Make a custom card anytime.</p>
+    </header>
+
+    <div class="controls">
+      <button id="newCard">New Card</button>
+      <button id="editPhrases">Edit Card Phrases</button>
+      <button id="clearMarks">Clear Marks</button>
+    </div>
+
+    <p id="status" class="status" aria-live="polite"></p>
+
+    <div id="bingo-board" class="board" aria-label="Bingo board"></div>
+
+    <section id="editorPanel" class="editor hidden">
+      <div class="editor-card">
+        <div class="editor-header">
+          <h2>Edit Bingo Phrases</h2>
+          <button id="closeEditor" class="secondary">Close</button>
+        </div>
+
+        <p class="editor-help">
+          Enter one phrase per line. Use at least 24 phrases. Your list saves in this browser.
+        </p>
+
+        <textarea id="phrasesInput" spellcheck="true"></textarea>
+
+        <div class="editor-actions">
+          <button id="savePhrases">Save Phrases</button>
+          <button id="resetDefaults" class="secondary">Reset Defaults</button>
+        </div>
+      </div>
+    </section>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
