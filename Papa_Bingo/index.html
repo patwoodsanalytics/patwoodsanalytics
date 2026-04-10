@@ -2,32 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Papa Sayings Bingo</title>
+  <meta name="theme-color" content="#2563eb" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="container">
     <header class="hero">
       <h1>Papa Sayings Bingo</h1>
-      <p class="subtitle">Tap squares as Papa says them. Make a custom card anytime.</p>
+      <p class="subtitle">Tap squares as Papa says them. Edit your phrase list anytime.</p>
     </header>
 
     <div class="controls">
-      <button id="newCard">New Card</button>
-      <button id="editPhrases">Edit Card Phrases</button>
-      <button id="clearMarks">Clear Marks</button>
+      <button id="newCard" type="button">New Card</button>
+      <button id="editPhrases" type="button">Edit Card Phrases</button>
+      <button id="clearMarks" type="button">Clear Marks</button>
     </div>
 
     <p id="status" class="status" aria-live="polite"></p>
 
     <div id="bingo-board" class="board" aria-label="Bingo board"></div>
 
-    <section id="editorPanel" class="editor hidden">
+    <section id="editorPanel" class="editor hidden" aria-hidden="true">
       <div class="editor-card">
         <div class="editor-header">
           <h2>Edit Bingo Phrases</h2>
-          <button id="closeEditor" class="secondary">Close</button>
+          <button id="closeEditor" class="secondary" type="button">Close</button>
         </div>
 
         <p class="editor-help">
@@ -37,13 +38,13 @@
         <textarea id="phrasesInput" spellcheck="true"></textarea>
 
         <div class="editor-actions">
-          <button id="savePhrases">Save Phrases</button>
-          <button id="resetDefaults" class="secondary">Reset Defaults</button>
+          <button id="savePhrases" type="button">Save Phrases</button>
+          <button id="resetDefaults" class="secondary" type="button">Reset Defaults</button>
         </div>
       </div>
     </section>
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
